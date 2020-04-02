@@ -22,10 +22,8 @@ end
 
 -- Check input and remove unwanted protocol
 local url = arg[1]
-
-if (string.match(url, "^https://")) then
-    url = string.gsub(url, "https://", "", 1)
-end
+url = string.gsub(url, "http://", "", 1)
+url = string.gsub(url, "https://", "", 1)
 
 local servername = string.match(url, "[^/]*")
 

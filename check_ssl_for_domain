@@ -1,0 +1,37 @@
+#!/usr/bin/lua
+
+-- Check local machine requirements
+local requirements = { "openssl", }
+
+for _, v in ipairs(requirements) do
+    local subp = io.popen("which " .. v .. " 2>&1")
+    local result = subp:read("*a")
+
+    if string.match(result, "no " .. v .. " in") then
+        print("Missing requirement: " .. v)
+        subp:close()
+        return
+    end
+    subp:close()
+end
+
+-- Check arguments
+if (arg[1] == nil) then
+    print("Usage: lua check_ssl.lua <URL>")
+    return
+end
+
+-- Check input and remove unwanted protocol
+local url = arg[1]
+
+if (string.match(url, "^https://")) then
+    url = string.gsub(url, "https://", "", 1)
+end
+
+local servername = string.match(url, "[^/]*")
+
+local command = "openssl s_client -showcerts -servername " .. servername ..
+                " -connect " .. servername .. ":443 2>/dev/null | openssl x509 -inform pem -noout -text"
+
+os.execute(command)
+

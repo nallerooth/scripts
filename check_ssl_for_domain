@@ -6,13 +6,12 @@ local requirements = { "openssl", }
 for _, v in ipairs(requirements) do
     local subp = io.popen("which " .. v .. " 2>&1")
     local result = subp:read("*a")
+    subp:close()
 
     if string.match(result, "no " .. v .. " in") then
         print("Missing requirement: " .. v)
-        subp:close()
         return
     end
-    subp:close()
 end
 
 -- Check arguments
